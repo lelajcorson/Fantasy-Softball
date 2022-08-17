@@ -5,6 +5,9 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.by import By
 import pandas as pd
 import requests
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 
 url = requests.get("http://stats.ncaa.org/player/index?id=15940&org_id=756&stats_player_seq=1973760&year_stat_category_id=14961", headers = {"User-Agent" : "Mozilla/5.0"})
@@ -13,12 +16,31 @@ option = webdriver.ChromeOptions()
 option.add_argument('--headless')
 driver = webdriver.Chrome(service = Service("C:\Lela\Coding\chromedriver_win32\chromedriver"), options = option)
 
+
 def getPlayerURL(name):
-    driver.get("https://www.google.com/")
-    driver.maximize_window()
+    driver.get("http://stats.ncaa.org/search/players")
     print(name)
-    search = driver.find_element(By.XPATH, "//input[@type = 'text']")
+    search = driver.find_element(By.XPATH, "//input[@type = 'search']")
     search.send_keys(name)
+
+    delay = 3 # seconds
+    try: #waiting for the page to load the search results
+        myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '//*[@id="people_search_data_table"]/tbody/tr/td[1]/a')))
+        print ("Page is ready!")
+    except TimeoutException:
+        print ("Loading took too much time!")
+
+    links = driver.find_elements(By.TAG_NAME, "a")
+    player_link = None
+
+    for link in links:
+        #print(link.text)
+        if(link.text.lower() == name.lower):
+            player_link = link
+    
+    print(player_link)
+            
+    
 
 getPlayerURL("gabbie plain")
 def getStats(url):
@@ -26,6 +48,8 @@ def getStats(url):
     stats_table_temp = tables[1]
     stats_df = pd.DataFrame(stats_table_temp.values[2:], columns = stats_table_temp.iloc[1])
     print(stats_df)
+
+
 
 # html_content = requests.get(url, headers = {'User-Agent': 'Chrome'}).text
 
