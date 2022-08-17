@@ -31,10 +31,10 @@ def getPlayerURL(name):
         print ("Loading took too much time!")
         
     player_link = driver.find_element(by = By.LINK_TEXT, value = name.title())
-    print(player_link.text)
-    player_link.click()
+    return player_link
+    # player_link.click()
+    # print(driver.title)
             
-    
 
 getPlayerURL("gabbie plain")
 def getStats(url):

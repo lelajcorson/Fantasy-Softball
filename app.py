@@ -6,26 +6,55 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.service import Service
 import pandas as pd
 import requests
+from selenium.webdriver.support.select import Select
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 #setting up Flask
 app = Flask(__name__)
 
-#setting up web scraping
-# option = webdriver.ChromeOptions()
-# option.add_argument('--headless')
+url = requests.get("http://stats.ncaa.org/player/index?id=15940&org_id=756&stats_player_seq=1973760&year_stat_category_id=14961", headers = {"User-Agent" : "Mozilla/5.0"})
 
-# driver = webdriver.Chrome(service = Service("C:/Users/lelaj/Downloads/chromedriver_win32/chromedriver"), options = option)
-
-#web scraping
-def getTable(url):
-    html_content = requests.get(url, headers = {'User-Agent': 'Chrome'}).text
-    soup = BeautifulSoup(html_content, "lxml")
-
-    table_list = "Schedule/Results".find_parent("div", class = "game_breakdown_div")
-    print(table_list)
+option = webdriver.ChromeOptions()
+option.add_argument('--headless')
+driver = webdriver.Chrome(service = Service("C:\Lela\Coding\chromedriver_win32\chromedriver"), options = option)
 
 
-currentProfile = NULL
+def get_player_URL(name):
+    driver.get("http://stats.ncaa.org/search/players")
+    #print(name)
+    search = driver.find_element(By.XPATH, "//input[@type = 'search']")
+    search.send_keys(name)
+
+    delay = 10 # seconds
+    try: #waiting for the page to load the search results
+        myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '//*[@id="people_search_data_table"]/tbody/tr/td[1]/a')))
+        print ("Page is ready!")
+    except TimeoutException:
+        print ("Loading took too much time!")
+
+    try:
+        player_link = driver.find_element(by = By.LINK_TEXT, value = name.title())
+    except Exception:
+        print("Exception!")
+    return player_link.get_attribute("href")
+    # player_link.click()
+    # print(driver.title)
+            
+
+def get_stats(url):
+    r = requests.get(url, headers = {"User-Agent" : "Mozilla/5.0"})
+    tables = pd.read_html(r.text, match = "Schedule/Results")
+    stats_table_temp = tables[1]
+    stats_df = pd.DataFrame(stats_table_temp.values[2:], columns = stats_table_temp.iloc[1])
+    print(stats_df)
+
+
+get_stats(get_player_URL("Jocelyn Alo"))
+
+currentProfile = None
 app.secret_key = "hi"
 
 def login_required(f):
