@@ -23,22 +23,16 @@ def getPlayerURL(name):
     search = driver.find_element(By.XPATH, "//input[@type = 'search']")
     search.send_keys(name)
 
-    delay = 3 # seconds
+    delay = 10 # seconds
     try: #waiting for the page to load the search results
         myElem = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.XPATH, '//*[@id="people_search_data_table"]/tbody/tr/td[1]/a')))
         print ("Page is ready!")
     except TimeoutException:
         print ("Loading took too much time!")
-
-    links = driver.find_elements(By.TAG_NAME, "a")
-    player_link = None
-
-    for link in links:
-        #print(link.text)
-        if(link.text.lower() == name.lower):
-            player_link = link
-    
-    print(player_link)
+        
+    player_link = driver.find_element(by = By.LINK_TEXT, value = name.title())
+    print(player_link.text)
+    player_link.click()
             
     
 
@@ -88,3 +82,15 @@ def getStats(url):
 # huh = pd.read_html(requests.get("http://stats.ncaa.org/player/index?id=15940&org_id=756&stats_player_seq=1973760&year_stat_category_id=14961", headers = {'User-agent': 'Mozilla/5.0'}).text)
 
 # print(huh)
+
+
+
+
+# links = driver.find_elements(By.TAG_NAME, "a")
+    # player_link = None
+
+    # for link in links: #finding the link to the player name
+    #     if(link.text.lower() == name.lower()):
+    #         player_link = link
+    
+    # print(player_link.get_attribute('href'))
