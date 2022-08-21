@@ -85,7 +85,6 @@ def getStats(url):
 
 
 
-
 # links = driver.find_elements(By.TAG_NAME, "a")
     # player_link = None
 
