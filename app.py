@@ -53,7 +53,7 @@ def get_stats(url):
     print(stats_df)
 
 
-get_stats(get_player_URL("Jocelyn Alo"))
+#get_stats(get_player_URL("Jocelyn Alo"))
 
 currentProfile = None
 app.secret_key = "hi"
