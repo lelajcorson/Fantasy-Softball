@@ -1,3 +1,4 @@
+from ast import Pass
 import pandas as pd
 
 class UserProfile:
@@ -37,8 +38,12 @@ class UserProfile:
             9: None 
         }
     
-    def add_player(self, new_player):
-        self.player_list.append(new_player)
+    def add_player(self, new_player, spot):
+        if(new_player.position == "P"):
+            self.pitcher_dict[spot] = new_player
+        else:
+            self.batter_dict[spot] = new_player
+
 
     def remove_player(self, old_player):
         if self.player_list.contains(old_player):
@@ -47,7 +52,7 @@ class UserProfile:
 
 
 class PlayerProfile:
-    def __init__(self, f_name, l_name, team, position, type):
+    def __init__(self, f_name, l_name, team, position):
         self.f_name = f_name
         self.l_name = l_name
         self.team = team
@@ -55,8 +60,8 @@ class PlayerProfile:
         self.stats = None
         self.url = ""
 
-    def set_stats(self, stats):
-        self.stats = stats
+    # def set_stats(self, stats):
+    #     self.stats = stats
     
-    def set_url(self, url):
-        self.url = url
+    # def set_url(self, url):
+    #     self.url = url
