@@ -52,8 +52,15 @@ def get_stats(url):
     stats_df = pd.DataFrame(stats_table_temp.values[2:], columns = stats_table_temp.iloc[1])
     print(stats_df)
 
+def create_player_profile(url):
+    r = requests.get(url, headers = {"User-Agent" : "Mozilla/5.0"})
+    print(url)
+    team = driver.find_element(By.XPATH, "//legend/a[@target = 'ATHLETICS_URL']")
+    print(team.text)
 
-#get_stats(get_player_URL("Jocelyn Alo"))
+
+
+create_player_profile(get_player_URL("Jocelyn Alo"))
 
 currentProfile = None
 app.secret_key = "hi"
